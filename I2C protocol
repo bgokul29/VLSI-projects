@@ -297,7 +297,7 @@ module slave(
 	end
 endmodule
 
-// testbench
+// testbench.v
 
 
 
