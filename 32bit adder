@@ -1,0 +1,49 @@
+// 32bit adder 
+// Code your design here
+module adder_32bit(
+  input wire [31:0] a,
+  input wire[31:0] b,
+  input wire cin,
+  
+  output reg [31:0] s,
+  output reg co
+);
+  
+  wire [32:0] S;
+  
+  assign S= a+b+cin;
+  assign s= S[31:0] ;
+  assign co =  S[32];
+  
+endmodule
+
+// testbench
+
+// Code your testbench here
+// or browse Examples
+module tb;
+  
+  reg [31:0] a;
+  reg [31:0] b;
+  reg cin;
+  
+  wire [31:0]s;
+  wire co;
+  
+  adder_32bit(
+    .a(a),
+    .b(b),
+    .cin(cin),
+    .s(s),
+    .co(co)
+  );
+  initial begin
+    a=32'b11111111111111111111111100000000;
+    b=32'b00000000000000000000000000000000;
+    cin= 0;
+  end
+  initial begin
+    $monitor("TIME= %0t | s=%b | co= %b",$time,s,co);
+  end
+endmodule
+  
