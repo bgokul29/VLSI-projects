@@ -1,0 +1,174 @@
+// Code your design here
+module traffic_controller(
+  input clk,rst,
+  output reg [2:0] a1,
+  output reg [2:0] a2,
+  output reg [2:0] a3,
+  output reg [2:0] a4
+);
+  
+  parameter S1 =0, S2 = 1, S3 = 2, S4 = 3,S5 = 4, S6 = 5;
+  reg [3:0] count ;
+  reg [2:0] state;
+  parameter sec7 = 7;
+  
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst ==1)
+        begin
+          state <= S1;
+          count <= 0;
+        end else begin
+          case(state)
+                        S1: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S2;
+                            count <= 0;
+                          end
+                        end
+                          S2: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S3;
+                            count <= 0;
+                          end
+                        end
+            				  S3: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S4;
+                            count <= 0;
+                          end
+                        end
+          				  S4: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S5;
+                            count <= 0;
+                          end
+                        end
+            			S5: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S6;
+                            count <= 0;
+                          end
+                        end
+            			S6: begin
+                          if(count < sec7) count <= count + 1;
+                          else begin
+                            state <= S2;
+                            count <= 0;
+                          end
+                        end
+            		default : begin
+                      		state <= S1;
+                      		count <= 0;
+                    			end
+          endcase
+        end
+    end
+  
+  always@(state)
+    begin
+      case(state)
+        				S1:begin
+                          a1 <= 3'b100;
+                          a2 <= 3'b100;
+                          a3 <= 3'b100;
+                          a4 <= 3'b100;
+                          
+                        end
+        				S2:begin
+                          a1 <= 3'b010;
+                          a2 <= 3'b100;
+                          a3 <= 3'b100;
+                          a4 <= 3'b100;
+                          
+                        end
+        				S3:begin
+                          a1 <= 3'b001;
+                          a2 <= 3'b010;
+                          a3 <= 3'b100;
+                          a4 <= 3'b100;
+                          
+                        end
+        				S4:begin
+                          a1 <= 3'b100;
+                          a2 <= 3'b001;
+                          a3 <= 3'b010;
+                          a4 <= 3'b100;
+                          
+                        end
+        			S5:begin
+                          a1 <= 3'b100;
+                          a2 <= 3'b100;
+                          a3 <= 3'b001;
+                          a4 <= 3'b010;
+                          
+                        end
+        			S6:begin
+                          a1 <= 3'b010;
+                          a2 <= 3'b100;
+                          a3 <= 3'b100;
+                          a4 <= 3'b001;
+                          
+                        end
+        			default : begin
+                      	 a1 <= 3'b100;
+                         a2 <= 3'b100;
+                         a3 <= 3'b100;
+                         a4 <= 3'b100;
+                    end
+      endcase
+    end
+endmodule
+
+
+//testbench  
+
+module tb_traffic_controller;
+  reg clk;
+  reg rst;
+  wire [2:0] a1, a2, a3, a4;
+
+  traffic_controller uut (
+    .clk(clk),
+    .rst(rst),
+    .a1(a1),
+    .a2(a2),
+    .a3(a3),
+    .a4(a4)
+  );
+
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk; 
+  end
+
+
+  initial begin
+   
+    rst = 1;
+    #10;
+    rst = 0;
+
+
+    #1000
+
+  
+    $finish;
+  end
+
+  initial begin
+    $monitor("Time = %0t | State = %b | a1 = %b, a2 = %b, a3 = %b, a4 = %b", 
+             $time, uut.state, a1, a2, a3, a4);
+    end
+     initial begin
+    $dumpfile("waveform.vcd");
+              $dumpvars(1);
+  
+    
+  end
+endmodule
