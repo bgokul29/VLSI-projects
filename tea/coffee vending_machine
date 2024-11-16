@@ -1,0 +1,112 @@
+// Code your design here
+module vending_machine(
+  input clk,rst,
+  input coin,
+  input button,
+  input tea_coffee,
+  output reg dispense_coffee,
+  output reg dispense_tea,
+  output reg refund
+);
+  parameter A=0, B=1, C=2, D=3;
+  
+  reg [3:0] state;
+  reg [7:0] count;
+  
+  
+  always@(posedge clk or negedge rst)
+    begin
+      if(rst ==1)
+        begin
+        	state <= A;
+          	count <= 0;
+          dispense_coffee <=0;
+          dispense_tea <= 0;
+          refund <= 0;
+        end else begin
+          
+              case(state)
+                A: 	begin
+                  if(coin) begin
+                    state <= B;
+                  end else  state <= A; 
+                	end
+                B : begin 
+                  if(button) begin
+                    state <= tea_coffee ? C: D;
+                    count <= 7;
+                  end else begin 
+                    state <= A;
+                    $display("no response-please take the refund");
+                    refund <= 1;
+                end
+                end
+                C: begin
+                  if(count == 0) begin
+                    $display("Tea dispensed fully");
+                    dispense_tea <= 1;
+                                        state <= A;
+
+                  end else count <= count - 1;
+                end
+                
+                D : begin
+                   if(count == 0) begin
+                     $display("coffee dispensed fully");
+                     dispense_coffee <= 1;
+                                         state <= A;
+
+                  end else count <= count - 1;
+                end
+              endcase
+        end
+    end
+  
+endmodule
+
+//testbench
+
+
+// Code your testbench here
+// or browse Examples
+module tb_vending_machine;
+  reg clk;
+  reg  rst;
+  reg coin ;
+  reg button ;
+  reg tea_coffee;
+  wire dispense_coffee;
+  wire dispense_tea;
+  wire refund;
+  
+  vending_machine aa1(.clk(clk) , .rst(rst), .coin(coin), .button(button), .tea_coffee(tea_coffee), .dispense_coffee(dispense_coffee), .dispense_tea(dispense_tea), .refund(refund));
+  
+  initial begin 
+    clk = 1'b0;
+    forever #5 clk = ~clk;
+  end
+  initial begin
+  rst = 1;
+  #10 rst = 0;
+  coin =1;
+  button = 1;
+  tea_coffee = 1;
+  #500;
+  coin =1;
+  button = 1;
+  tea_coffee = 0;
+    #500;
+    coin = 1;
+    button = 0;
+    #500
+  $finish;
+  end
+   initial begin
+    $monitor("Time: %0t  Coin: %b | Button: %b | Tea/Coffee: %b | Dispense Tea: %b | Dispense Coffee: %b | Refund: %b",
+             $time,  coin, button, tea_coffee, dispense_tea, dispense_coffee, refund);
+  end
+  initial begin
+    $dumpfile("wave.vcd");
+    $dumpvars(1);
+  end
+endmodule
