@@ -6,3 +6,5 @@ o/p for 32 bit adder:
 ![image](https://github.com/user-attachments/assets/aff09f72-25fa-4445-aceb-1b9225ad8d2f)
 o/p for traffic controller
 ![Screenshot 2024-11-16 183732](https://github.com/user-attachments/assets/648c412a-ac3b-4876-bf52-68a77bbe513d)
+o/p for tea/coffee vending machine 
+![image](https://github.com/user-attachments/assets/2b7792a7-d90a-4f6d-93b9-493326aeaff8)
