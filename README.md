@@ -10,3 +10,5 @@ o/p for tea/coffee vending machine
 ![image](https://github.com/user-attachments/assets/2b7792a7-d90a-4f6d-93b9-493326aeaff8)
 o/p for ALU 
 ![image](https://github.com/user-attachments/assets/743bf03d-8b94-44fe-9723-7c3dcd47bb31)
+o/p for counter 
+![image](https://github.com/user-attachments/assets/56c5a320-bcdf-4477-89c9-cade0c96bce7)
