@@ -1,0 +1,53 @@
+module alu(
+  input [7:0]a,b,
+  input [3:0] sel,
+  output reg [7:0] result
+);
+  
+  reg [7:0] out;
+  
+  assign result = out;
+  
+  always@(*)
+    begin
+      case(sel)
+       	4'b0000  :out <= a+ b;	
+        4'b0001  :out <= a -b;
+        4'b0010  :out <= a *b;
+        4'b0011  :out <= a/ b;
+        4'b0100  :out <= a %b;
+        4'b0101  :out <= a >>b;
+        4'b0110  :out <= a<< b;
+        4'b0111  :out <= a ^b;
+        4'b1000  :out <= ~(a ^b);
+      endcase
+    end
+endmodule
+
+
+/// tb
+
+module tb();
+  reg [7:0] a,b;
+  reg [3:0] sel;
+  wire [7:0] result;
+  integer i;
+  alu aa1(.a(a),.b(b),.sel(sel),.result(result));
+  
+  initial begin
+    a=8'h0A;
+    b=8'h02;
+    sel = 4'b00;
+    for(i=0;i<9;i=i+1)
+      begin
+        sel = 4'h0001;
+        #10;
+      end
+    a=8'h0A;
+    b=8'h02;
+  end
+  initial begin
+    
+    $monitor("time = %0t | a= %d | b = %d | result = %d",$time,a,b,result);
+  end
+endmodule
