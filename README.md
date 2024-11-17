@@ -8,3 +8,5 @@ o/p for traffic controller
 ![Screenshot 2024-11-16 183732](https://github.com/user-attachments/assets/648c412a-ac3b-4876-bf52-68a77bbe513d)
 o/p for tea/coffee vending machine 
 ![image](https://github.com/user-attachments/assets/2b7792a7-d90a-4f6d-93b9-493326aeaff8)
+o/p for ALU 
+![image](https://github.com/user-attachments/assets/743bf03d-8b94-44fe-9723-7c3dcd47bb31)
