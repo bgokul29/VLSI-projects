@@ -1,0 +1,131 @@
+// Code your design here
+module tx(
+  input clk,rst,
+  input [6:0] data_in,
+  input start,
+  output tx
+);
+  
+  parameter IDLE =0,START=1,SEND =2, STOP=3;
+  
+  reg [2:0] state;
+  reg [6:0] count;
+  reg tx_out;
+  reg [6:0] saved_data;
+  
+
+  assign tx = (state == SEND) ? tx_out : 1'bz;
+  
+  
+  always@(posedge clk or negedge rst)
+    
+    begin
+      if(rst == 1)
+        begin
+          state <= IDLE;
+          count  <= 0;
+        end
+      else begin
+        case(state)
+          IDLE: begin
+            if(start) begin
+              saved_data <= data_in;
+              state <= START;
+            end else state <= IDLE;
+          end
+          
+          START:begin
+            state <= SEND;
+            count <= 7;
+          end
+          
+          SEND:begin
+            if(count == 0) begin
+              state <= STOP;
+            end else count <= count - 1;
+          end
+          STOP: begin
+            state <= IDLE;
+          end
+        endcase
+      end
+    end
+  always@(*) 
+    begin
+      case(state)
+        SEND: begin
+          tx_out <= saved_data[count];
+        end
+      endcase
+    end
+endmodule
+
+module rx(
+  input tx,
+  output rx
+);
+  
+  parameter IDLE = 0,RECEIVE = 1;
+  
+  reg [1:0] state;
+  reg [6:0] count;
+  reg rx_out;
+  assign rx = (state== RECEIVE) ? rx_out : 1'bz;
+  always@(*)
+    begin
+      case(state)
+        IDLE :	begin
+          state <= RECEIVE;
+          count <=7;
+        end
+        RECEIVE: begin
+          rx_out <= tx[count];
+          if (count == 0) begin
+            state <= IDLE;
+          end else count <= count - 1;
+        end
+      endcase
+    end
+endmodule
+
+
+//tb
+
+`timescale 1ns/1ps
+
+module tb;
+
+  reg clk, rst, start;
+  reg [6:0] data_in;
+  wire tx, rx;
+
+  tx tx_inst (
+    .clk(clk),
+    .rst(rst),
+    .data_in(data_in),
+    .start(start),
+    .tx(tx)
+  );
+
+  rx rx_inst (
+    .tx(tx),
+    .rx(rx)
+  );
+
+  initial clk = 0;
+  always #5 clk = ~clk;
+
+  initial begin
+    rst = 1;
+    start = 0;
+    data_in = 7'b1010101;
+    #10 rst = 0;
+    #10 start = 1;
+    #10 start = 0;
+    #100 $stop;
+  end
+initial begin
+  $dumpfile("wave.vcd");
+  $dumpvars(1);
+end
+endmodule
