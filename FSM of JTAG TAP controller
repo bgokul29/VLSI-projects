@@ -1,0 +1,221 @@
+// Code your design here
+module tap_controller(
+  input tck,tms,trst,
+  output cdr1,sdr1,udr1,cir1,sir1,uir1
+);
+  
+  localparam TEST_LOGIC_RESET = 0;
+  localparam RUN_TEST_IDLE = 1;
+  localparam SELECT_DR = 2;
+  localparam CAPTURE_DR = 3;
+  localparam SHIFT_DR = 4;
+  localparam EXIT1_DR = 5;
+  localparam EXIT2_DR = 6;
+  localparam UPDATE_DR = 7;
+  localparam PAUSE_DR = 8;
+  localparam SELECT_IR = 9;
+  localparam CAPTURE_IR = 10;
+  localparam SHIFT_IR= 11;
+  localparam EXIT1_IR=12;
+  localparam EXIT2_IR = 13;
+  localparam UPDATE_IR = 14;
+  localparam PAUSE_IR = 15;
+  
+  reg [3:0] state;
+  
+  assign  cdr1 =   (state == CAPTURE_DR );
+  assign  sdr1  =   (state == SHIFT_DR );
+  assign  udr1 =   (state == UPDATE_DR );
+  assign  cir1 =   (state == CAPTURE_IR );
+  assign  sir1 =   (state == SHIFT_IR );
+  assign  uir1 =   (state == UPDATE_IR );
+  
+  always@(posedge tck or negedge trst) 
+    begin
+      if(~trst ) begin
+        state <= TEST_LOGIC_RESET;
+      end
+      else begin
+        case(state)
+          TEST_LOGIC_RESET : begin
+            if(tms)
+              state <= TEST_LOGIC_RESET;
+          else state <=  RUN_TEST_IDLE;
+          end
+           RUN_TEST_IDLE: begin
+             if(tms)
+               state <= SELECT_DR;
+             else state <=  RUN_TEST_IDLE;
+           end
+          SELECT_DR : begin
+            if(tms) state <= SELECT_IR;
+            else  state <= SELECT_DR;
+          end
+          CAPTURE_DR: begin
+            if(tms) state <= EXIT1_DR;
+            else state <= SHIFT_DR;
+          end
+          SHIFT_DR : begin
+            if(tms) state <= EXIT1_DR;
+            else state <= SHIFT_DR;
+          end
+          EXIT1_DR : begin
+            if(tms) state <= UPDATE_DR;
+            else state <= PAUSE_DR;
+          end
+          PAUSE_DR : begin
+            if(tms) state <= EXIT2_DR;
+            else state <= PAUSE_DR;
+          end
+          EXIT2_DR:begin
+            if(tms) state <= UPDATE_DR;
+            else state <= SHIFT_DR;
+          end
+          UPDATE_DR:begin
+            if(tms) begin
+              state <= SELECT_DR;
+            end else state <= RUN_TEST_IDLE;
+          end
+          
+          SELECT_IR: begin
+            if(tms) state <= TEST_LOGIC_RESET;
+            else state <= CAPTURE_IR;
+          end
+          CAPTURE_IR:begin
+            if(tms) state <= EXIT1_IR;
+            else state <= SHIFT_IR;
+          end
+          
+          SHIFT_IR: begin
+            if(tms) state <= EXIT1_IR;
+            else state <= SHIFT_IR;
+          end
+          
+          EXIT1_IR: begin
+            if(tms) state <= UPDATE_IR;
+            else state <= PAUSE_IR;
+          end
+          
+          PAUSE_IR: begin
+            if(tms) state <= EXIT2_IR;
+            else state <= PAUSE_IR;
+          end
+          
+          EXIT2_IR:begin
+            if(tms) state <= UPDATE_IR;
+            else state <= SHIFT_IR;
+          end
+          
+          UPDATE_IR: begin
+            if(tms) state <= SELECT_DR;
+            else state <= RUN_TEST_IDLE;
+          end
+          
+        endcase
+      end
+      
+      
+      
+    end
+  
+endmodule
+
+
+
+//tb
+
+module tb;
+
+
+	reg tck;
+	reg tms;
+	reg trst;
+
+	wire cdr1;
+	wire sdr1;
+	wire udr1;
+	wire cir1;
+	wire sir1;
+	wire uir1;
+
+	tap_controller aa1 (
+		.tck(tck), 
+		.tms(tms), 
+		.trst(trst), 
+		.cdr1(cdr1), 
+		.sdr1(sdr1), 
+		.udr1(udr1), 
+		.cir1(cir1), 
+		.sir1(sir1), 
+		.uir1(uir1)
+	);
+
+	
+
+initial begin
+		
+		tck = 0;
+		forever #5 tck = ~tck;
+end
+
+initial begin
+		
+		tms = 0;
+		trst = 0;
+		#20;
+	
+		trst = 1;
+#20;
+		tms = 1;
+		
+	   #20;
+	   tms = 0;
+      #20;	
+     tms = 0;
+	  #20;
+	   tms = 0; 
+		#20;
+		tms = 1;
+	  #20;
+	   tms = 1;
+		
+		#20;
+		tms=0;
+		#20;
+		tms = 1;
+	  #20;
+	   tms = 1;
+		#20
+		
+		tms = 0;
+		#20;
+		
+		tms = 1;
+	   #10;
+	   tms = 0;
+      #20;	
+     tms = 0;
+	  #20;
+	   tms = 0; 
+		#20;
+		tms = 1;
+	  #20;
+	   tms = 1;
+		#20;
+
+		tms=1;
+		#100;
+		tms=0;
+		
+		#100
+  $finish;
+  
+        
+
+	end
+      
+  initial begin
+    $dumpfile("wave.vcd");
+    $dumpvars(1);
+  end
+endmodule
