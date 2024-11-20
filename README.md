@@ -12,3 +12,5 @@ o/p for ALU
 ![image](https://github.com/user-attachments/assets/743bf03d-8b94-44fe-9723-7c3dcd47bb31)
 o/p for counter 
 ![image](https://github.com/user-attachments/assets/56c5a320-bcdf-4477-89c9-cade0c96bce7)
+o/p for TAP_controller
+![image](https://github.com/user-attachments/assets/f3223b67-ed1f-4a34-855d-a691b4fbeb9a)
